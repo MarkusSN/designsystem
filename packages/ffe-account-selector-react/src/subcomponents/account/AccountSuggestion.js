@@ -1,13 +1,26 @@
 import React from 'react';
-import { bool } from 'prop-types';
+import { bool, arrayOf, string } from 'prop-types';
+import classNames from 'classnames';
 
 import { accountFormatter, balanceWithCurrency } from '../../util/format';
 import { Account, Locale } from '../../util/types';
 
-const AccountSuggestionItem = ({ account, locale, showBalance = true }) => {
-    const { accountNumber, balance, name, currencyCode } = account;
+const AccountSuggestionItem = ({
+    item,
+    isHighlighted,
+    locale,
+    dropdownAttributes,
+}) => {
+    const { accountNumber, balance, name, currencyCode } = item;
     return (
-        <div className="ffe-account-suggestion__account">
+        <div
+            className={classNames(
+                'ffe-account-suggestion ffe-account-suggestion__account',
+                {
+                    'ffe-account-suggestion--highlighted': isHighlighted,
+                },
+            )}
+        >
             <span className="ffe-account-suggestion__name ffe-link-text ffe-link-text--no-underline">
                 {name}
             </span>
@@ -15,7 +28,7 @@ const AccountSuggestionItem = ({ account, locale, showBalance = true }) => {
                 <span className="ffe-account-suggestion__number">
                     {accountFormatter(accountNumber)}
                 </span>
-                {showBalance && (
+                {dropdownAttributes.includes('balance') && (
                     <span className="ffe-account-suggestion__balance">
                         {balanceWithCurrency(balance, locale, currencyCode)}
                     </span>
@@ -26,9 +39,10 @@ const AccountSuggestionItem = ({ account, locale, showBalance = true }) => {
 };
 
 AccountSuggestionItem.propTypes = {
-    account: Account.isRequired,
+    item: Account.isRequired,
     locale: Locale.isRequired,
-    showBalance: bool,
+    isHighlighted: bool.isRequired,
+    dropdownAttributes: arrayOf(string).isRequired,
 };
 
 export default AccountSuggestionItem;
